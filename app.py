@@ -1009,48 +1009,49 @@ tbody tr:not(:last-child) td{border-bottom:1px solid rgba(255,255,255,.04)}
   </div>
 </div>
 
+""" + """
 <script>
 const ALL=__PATIENTS_JSON__;
 let curFilter=null;
-function filterStatus(f,btn){{
+function filterStatus(f,btn){
   curFilter=f;
   document.querySelectorAll('.fb,.s-item').forEach(b=>b.classList.remove('on','active'));
   if(btn)btn.classList.add(btn.classList.contains('fb')?'on':'active');
   render();
-}}
-function render(){{
+}
+function render(){
   const q=document.getElementById('search').value.toLowerCase();
   let data=ALL.filter(p=>(!curFilter||p.status===curFilter)&&(!q||p.name.toLowerCase().includes(q)||p.symptoms.toLowerCase().includes(q)));
   const tbody=document.getElementById('tbody');
-  if(!data.length){{tbody.innerHTML='<tr><td colspan="7" style="padding:3rem;text-align:center;color:rgba(255,255,255,.2)">No patients found</td></tr>';return;}}
-  const scMap={{Pending:['rgba(212,168,83,.15)','rgba(212,168,83,.3)','#d4a853'],Confirmed:['rgba(13,148,136,.15)','rgba(13,148,136,.3)','var(--teal-light)'],Examined:['rgba(34,197,94,.15)','rgba(34,197,94,.3)','#86efac'],Cancelled:['rgba(239,68,68,.12)','rgba(239,68,68,.25)','#fca5a5']}};
-  const iconMap={{Pending:'🟡',Confirmed:'🟢',Examined:'✅',Cancelled:'🔴'}};
-  tbody.innerHTML=data.map((p,i)=>{{
-    const d=new Date(p.date_of_appointment+'T00:00:00').toLocaleDateString('en-US',{{month:'short',day:'numeric',year:'numeric'}});
-    const t=new Date('1970-01-01T'+p.appointment_time).toLocaleTimeString('en-US',{{hour:'numeric',minute:'2-digit',hour12:true}});
-    const syms=p.symptoms.split(/[\\n,]+/).map(s=>s.trim()).filter(Boolean);
-    const symH=syms.slice(0,3).map(s=>`<span style="display:inline-block;background:rgba(13,148,136,.12);border:1px solid rgba(13,148,136,.2);color:var(--teal-light);font-size:.7rem;padding:.18rem .55rem;border-radius:100px;margin:.1rem">${{s}}</span>`).join('')+(syms.length>3?`<span style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);font-size:.7rem;padding:.18rem .55rem;border-radius:100px;margin:.1rem">+${{syms.length-3}}</span>`:'');
+  if(!data.length){tbody.innerHTML='<tr><td colspan="7" style="padding:3rem;text-align:center;color:rgba(255,255,255,.2)">No patients found</td></tr>';return;}
+  const scMap={Pending:['rgba(212,168,83,.15)','rgba(212,168,83,.3)','#d4a853'],Confirmed:['rgba(13,148,136,.15)','rgba(13,148,136,.3)','var(--teal-light)'],Examined:['rgba(34,197,94,.15)','rgba(34,197,94,.3)','#86efac'],Cancelled:['rgba(239,68,68,.12)','rgba(239,68,68,.25)','#fca5a5']};
+  const iconMap={Pending:'🟡',Confirmed:'🟢',Examined:'✅',Cancelled:'🔴'};
+  tbody.innerHTML=data.map((p,i)=>{
+    const d=new Date(p.date_of_appointment+'T00:00:00').toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    const t=new Date('1970-01-01T'+p.appointment_time).toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit',hour12:true});
+    const syms=p.symptoms.split(/[\n,]+/).map(s=>s.trim()).filter(Boolean);
+    const symH=syms.slice(0,3).map(s=>`<span style="display:inline-block;background:rgba(13,148,136,.12);border:1px solid rgba(13,148,136,.2);color:var(--teal-light);font-size:.7rem;padding:.18rem .55rem;border-radius:100px;margin:.1rem">${s}</span>`).join('')+(syms.length>3?`<span style="background:rgba(255,255,255,.06);color:rgba(255,255,255,.4);font-size:.7rem;padding:.18rem .55rem;border-radius:100px;margin:.1rem">+${syms.length-3}</span>`:'');
     const sc=scMap[p.status]||scMap.Pending;
     const icon=iconMap[p.status]||'🟡';
-    return `<tr onclick="window.location='/doctor/patient/${{p.id}}/examine'" title="Click to examine">
-      <td style="color:rgba(255,255,255,.3);padding:.9rem 1rem">${{i+1}}</td>
-      <td style="padding:.9rem .75rem;font-weight:600">${{p.name}}</td>
-      <td style="padding:.9rem .75rem;color:rgba(255,255,255,.5);font-size:.83rem">${{d}}</td>
-      <td style="padding:.9rem .75rem;color:rgba(255,255,255,.5);font-size:.83rem">${{t}}</td>
-      <td style="padding:.9rem .75rem;font-size:.82rem;max-width:220px">${{symH}}</td>
-      <td style="padding:.9rem .75rem"><span style="display:inline-block;background:${{sc[0]}};border:1px solid ${{sc[1]}};color:${{sc[2]}};padding:.3rem .75rem;border-radius:100px;font-size:.78rem;font-weight:500">${{icon}} ${{p.status}}</span></td>
+    return `<tr onclick="window.location='/doctor/patient/${p.id}/examine'" style="cursor:pointer">
+      <td style="color:rgba(255,255,255,.3);padding:.9rem 1rem">${i+1}</td>
+      <td style="padding:.9rem .75rem;font-weight:600">${p.name}</td>
+      <td style="padding:.9rem .75rem;color:rgba(255,255,255,.5);font-size:.83rem">${d}</td>
+      <td style="padding:.9rem .75rem;color:rgba(255,255,255,.5);font-size:.83rem">${t}</td>
+      <td style="padding:.9rem .75rem;font-size:.82rem;max-width:220px">${symH}</td>
+      <td style="padding:.9rem .75rem"><span style="display:inline-block;background:${sc[0]};border:1px solid ${sc[1]};color:${sc[2]};padding:.3rem .75rem;border-radius:100px;font-size:.78rem;font-weight:500">${icon} ${p.status}</span></td>
       <td style="padding:.9rem .75rem" onclick="event.stopPropagation()">
-        <button onclick="window.location='/doctor/patient/${{p.id}}/examine'" style="padding:.32rem .75rem;border-radius:8px;font-size:.76rem;cursor:pointer;border:1px solid rgba(13,148,136,.35);background:rgba(13,148,136,.12);color:var(--teal-light);font-family:inherit;margin-right:.3rem;font-weight:500">🩺 Examine</button>
-        <button onclick="delPt(${{p.id}})" style="padding:.32rem .7rem;border-radius:8px;font-size:.76rem;cursor:pointer;border:1px solid rgba(239,68,68,.25);background:rgba(239,68,68,.08);color:#fca5a5;font-family:inherit">🗑</button>
+        <a href="/doctor/patient/${p.id}/examine" style="display:inline-block;padding:.32rem .75rem;border-radius:8px;font-size:.76rem;border:1px solid rgba(13,148,136,.35);background:rgba(13,148,136,.12);color:var(--teal-light);font-family:inherit;margin-right:.3rem;font-weight:500;text-decoration:none">🩺 Examine</a>
+        <button onclick="delPt(${p.id})" style="padding:.32rem .7rem;border-radius:8px;font-size:.76rem;cursor:pointer;border:1px solid rgba(239,68,68,.25);background:rgba(239,68,68,.08);color:#fca5a5;font-family:inherit">🗑</button>
       </td>
     </tr>`;
-  }}).join('');
-}}
-async function delPt(id){{
+  }).join('');
+}
+async function delPt(id){
   if(!confirm('Delete this patient record?')) return;
-  await fetch(`/doctor/patient/${{id}}/delete`,{{method:'POST'}});
+  await fetch('/doctor/patient/'+id+'/delete',{method:'POST'});
   location.reload();
-}}
+}
 render();
 </script>"""
     return page("Dashboard", body.replace("__PATIENTS_JSON__", patients_json))
