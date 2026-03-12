@@ -1010,7 +1010,7 @@ tbody tr:not(:last-child) td{border-bottom:1px solid rgba(255,255,255,.04)}
 </div>
 
 <script>
-const ALL={patients_json};
+const ALL=__PATIENTS_JSON__;
 let curFilter=null;
 function filterStatus(f,btn){{
   curFilter=f;
@@ -1053,7 +1053,7 @@ async function delPt(id){{
 }}
 render();
 </script>"""
-    return page("Dashboard", body)
+    return page("Dashboard", body.replace("__PATIENTS_JSON__", patients_json))
 
 
 # ─────────────────────────────────────────────
